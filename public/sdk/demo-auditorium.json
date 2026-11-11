@@ -1,0 +1,771 @@
+{
+  "schema": "seatview/auditorium@1",
+  "id": "demo-auditorium-3",
+  "name": "Auditorium 3",
+  "columns": 18,
+  "rows": [
+    {
+      "label": "A",
+      "seats": [
+        {
+          "column": 2,
+          "label": "1",
+          "category": "STD"
+        },
+        {
+          "column": 3,
+          "label": "2",
+          "category": "STD"
+        },
+        {
+          "column": 4,
+          "label": "3",
+          "category": "STD"
+        },
+        {
+          "column": 5,
+          "label": "4",
+          "category": "STD"
+        },
+        {
+          "column": 6,
+          "label": "5",
+          "category": "STD"
+        },
+        {
+          "column": 7,
+          "label": "6",
+          "category": "STD"
+        },
+        {
+          "column": 10,
+          "label": "7",
+          "category": "STD"
+        },
+        {
+          "column": 11,
+          "label": "8",
+          "category": "STD"
+        },
+        {
+          "column": 12,
+          "label": "9",
+          "category": "STD"
+        },
+        {
+          "column": 13,
+          "label": "10",
+          "category": "STD"
+        },
+        {
+          "column": 14,
+          "label": "11",
+          "category": "STD"
+        },
+        {
+          "column": 15,
+          "label": "12",
+          "category": "STD"
+        }
+      ]
+    },
+    {
+      "label": "B",
+      "seats": [
+        {
+          "column": 0,
+          "label": "1",
+          "category": "STD"
+        },
+        {
+          "column": 1,
+          "label": "2",
+          "category": "STD"
+        },
+        {
+          "column": 2,
+          "label": "3",
+          "category": "STD"
+        },
+        {
+          "column": 3,
+          "label": "4",
+          "category": "STD"
+        },
+        {
+          "column": 4,
+          "label": "5",
+          "category": "STD"
+        },
+        {
+          "column": 5,
+          "label": "6",
+          "category": "STD"
+        },
+        {
+          "column": 6,
+          "label": "7",
+          "category": "STD"
+        },
+        {
+          "column": 7,
+          "label": "8",
+          "category": "STD"
+        },
+        {
+          "column": 10,
+          "label": "9",
+          "category": "STD"
+        },
+        {
+          "column": 11,
+          "label": "10",
+          "category": "STD"
+        },
+        {
+          "column": 12,
+          "label": "11",
+          "category": "STD"
+        },
+        {
+          "column": 13,
+          "label": "12",
+          "category": "STD"
+        },
+        {
+          "column": 14,
+          "label": "13",
+          "category": "STD"
+        },
+        {
+          "column": 15,
+          "label": "14",
+          "category": "STD"
+        },
+        {
+          "column": 16,
+          "label": "15",
+          "category": "STD"
+        },
+        {
+          "column": 17,
+          "label": "16",
+          "category": "STD"
+        }
+      ]
+    },
+    {
+      "label": "C",
+      "seats": [
+        {
+          "column": 0,
+          "label": "1",
+          "category": "STD"
+        },
+        {
+          "column": 1,
+          "label": "2",
+          "category": "STD"
+        },
+        {
+          "column": 2,
+          "label": "3",
+          "category": "DIS",
+          "wheelchair": true
+        },
+        {
+          "column": 3,
+          "label": "4",
+          "category": "STD"
+        },
+        {
+          "column": 4,
+          "label": "5",
+          "category": "STD"
+        },
+        {
+          "column": 5,
+          "label": "6",
+          "category": "STD"
+        },
+        {
+          "column": 6,
+          "label": "7",
+          "category": "STD"
+        },
+        {
+          "column": 7,
+          "label": "8",
+          "category": "STD"
+        },
+        {
+          "column": 10,
+          "label": "9",
+          "category": "STD"
+        },
+        {
+          "column": 11,
+          "label": "10",
+          "category": "STD"
+        },
+        {
+          "column": 12,
+          "label": "11",
+          "category": "STD"
+        },
+        {
+          "column": 13,
+          "label": "12",
+          "category": "STD"
+        },
+        {
+          "column": 14,
+          "label": "13",
+          "category": "STD"
+        },
+        {
+          "column": 15,
+          "label": "14",
+          "category": "STD"
+        },
+        {
+          "column": 16,
+          "label": "15",
+          "category": "STD"
+        },
+        {
+          "column": 17,
+          "label": "16",
+          "category": "STD"
+        }
+      ]
+    },
+    {
+      "label": "D",
+      "seats": [
+        {
+          "column": 0,
+          "label": "1",
+          "category": "STD"
+        },
+        {
+          "column": 1,
+          "label": "2",
+          "category": "STD"
+        },
+        {
+          "column": 2,
+          "label": "3",
+          "category": "STD"
+        },
+        {
+          "column": 3,
+          "label": "4",
+          "category": "STD"
+        },
+        {
+          "column": 4,
+          "label": "5",
+          "category": "STD"
+        },
+        {
+          "column": 5,
+          "label": "6",
+          "category": "STD"
+        },
+        {
+          "column": 6,
+          "label": "7",
+          "category": "STD"
+        },
+        {
+          "column": 7,
+          "label": "8",
+          "category": "STD"
+        },
+        {
+          "column": 10,
+          "label": "9",
+          "category": "STD"
+        },
+        {
+          "column": 11,
+          "label": "10",
+          "category": "STD"
+        },
+        {
+          "column": 12,
+          "label": "11",
+          "category": "DUO",
+          "pair": "left"
+        },
+        {
+          "column": 13,
+          "label": "12",
+          "category": "DUO",
+          "pair": "right"
+        },
+        {
+          "column": 14,
+          "label": "13",
+          "category": "STD"
+        },
+        {
+          "column": 15,
+          "label": "14",
+          "category": "STD"
+        },
+        {
+          "column": 16,
+          "label": "15",
+          "category": "STD"
+        },
+        {
+          "column": 17,
+          "label": "16",
+          "category": "STD"
+        }
+      ]
+    },
+    {
+      "label": "E",
+      "seats": [
+        {
+          "column": 0,
+          "label": "1",
+          "category": "STD"
+        },
+        {
+          "column": 1,
+          "label": "2",
+          "category": "STD"
+        },
+        {
+          "column": 2,
+          "label": "3",
+          "category": "STD"
+        },
+        {
+          "column": 3,
+          "label": "4",
+          "category": "STD"
+        },
+        {
+          "column": 4,
+          "label": "5",
+          "category": "DUO",
+          "pair": "left"
+        },
+        {
+          "column": 5,
+          "label": "6",
+          "category": "DUO",
+          "pair": "right"
+        },
+        {
+          "column": 6,
+          "label": "7",
+          "category": "STD"
+        },
+        {
+          "column": 7,
+          "label": "8",
+          "category": "STD"
+        },
+        {
+          "column": 10,
+          "label": "9",
+          "category": "STD"
+        },
+        {
+          "column": 11,
+          "label": "10",
+          "category": "STD"
+        },
+        {
+          "column": 12,
+          "label": "11",
+          "category": "STD"
+        },
+        {
+          "column": 13,
+          "label": "12",
+          "category": "STD"
+        },
+        {
+          "column": 14,
+          "label": "13",
+          "category": "STD"
+        },
+        {
+          "column": 15,
+          "label": "14",
+          "category": "STD"
+        },
+        {
+          "column": 16,
+          "label": "15",
+          "category": "STD"
+        },
+        {
+          "column": 17,
+          "label": "16",
+          "category": "STD"
+        }
+      ]
+    },
+    {
+      "label": "F",
+      "seats": [
+        {
+          "column": 0,
+          "label": "1",
+          "category": "STD"
+        },
+        {
+          "column": 1,
+          "label": "2",
+          "category": "STD"
+        },
+        {
+          "column": 2,
+          "label": "3",
+          "category": "STD"
+        },
+        {
+          "column": 3,
+          "label": "4",
+          "category": "STD"
+        },
+        {
+          "column": 4,
+          "label": "5",
+          "category": "STD"
+        },
+        {
+          "column": 5,
+          "label": "6",
+          "category": "STD"
+        },
+        {
+          "column": 6,
+          "label": "7",
+          "category": "STD"
+        },
+        {
+          "column": 7,
+          "label": "8",
+          "category": "STD"
+        },
+        {
+          "column": 10,
+          "label": "9",
+          "category": "STD"
+        },
+        {
+          "column": 11,
+          "label": "10",
+          "category": "STD"
+        },
+        {
+          "column": 12,
+          "label": "11",
+          "category": "STD"
+        },
+        {
+          "column": 13,
+          "label": "12",
+          "category": "STD"
+        },
+        {
+          "column": 14,
+          "label": "13",
+          "category": "STD"
+        },
+        {
+          "column": 15,
+          "label": "14",
+          "category": "STD"
+        },
+        {
+          "column": 16,
+          "label": "15",
+          "category": "STD"
+        },
+        {
+          "column": 17,
+          "label": "16",
+          "category": "STD"
+        }
+      ]
+    },
+    {
+      "label": "G",
+      "seats": [
+        {
+          "column": 0,
+          "label": "1",
+          "category": "STD"
+        },
+        {
+          "column": 1,
+          "label": "2",
+          "category": "STD"
+        },
+        {
+          "column": 2,
+          "label": "3",
+          "category": "STD"
+        },
+        {
+          "column": 3,
+          "label": "4",
+          "category": "STD"
+        },
+        {
+          "column": 4,
+          "label": "5",
+          "category": "DUO",
+          "pair": "left"
+        },
+        {
+          "column": 5,
+          "label": "6",
+          "category": "DUO",
+          "pair": "right"
+        },
+        {
+          "column": 6,
+          "label": "7",
+          "category": "STD"
+        },
+        {
+          "column": 7,
+          "label": "8",
+          "category": "STD"
+        },
+        {
+          "column": 10,
+          "label": "9",
+          "category": "STD"
+        },
+        {
+          "column": 11,
+          "label": "10",
+          "category": "STD"
+        },
+        {
+          "column": 12,
+          "label": "11",
+          "category": "DUO",
+          "pair": "left"
+        },
+        {
+          "column": 13,
+          "label": "12",
+          "category": "DUO",
+          "pair": "right"
+        },
+        {
+          "column": 14,
+          "label": "13",
+          "category": "STD"
+        },
+        {
+          "column": 15,
+          "label": "14",
+          "category": "STD"
+        },
+        {
+          "column": 16,
+          "label": "15",
+          "category": "STD"
+        },
+        {
+          "column": 17,
+          "label": "16",
+          "category": "STD"
+        }
+      ]
+    },
+    {
+      "label": "H",
+      "seats": [
+        {
+          "column": 0,
+          "label": "1",
+          "category": "STD"
+        },
+        {
+          "column": 1,
+          "label": "2",
+          "category": "STD"
+        },
+        {
+          "column": 2,
+          "label": "3",
+          "category": "STD"
+        },
+        {
+          "column": 3,
+          "label": "4",
+          "category": "STD"
+        },
+        {
+          "column": 4,
+          "label": "5",
+          "category": "STD"
+        },
+        {
+          "column": 5,
+          "label": "6",
+          "category": "STD"
+        },
+        {
+          "column": 6,
+          "label": "7",
+          "category": "STD"
+        },
+        {
+          "column": 7,
+          "label": "8",
+          "category": "STD"
+        },
+        {
+          "column": 10,
+          "label": "9",
+          "category": "STD"
+        },
+        {
+          "column": 11,
+          "label": "10",
+          "category": "STD"
+        },
+        {
+          "column": 12,
+          "label": "11",
+          "category": "STD"
+        },
+        {
+          "column": 13,
+          "label": "12",
+          "category": "STD"
+        },
+        {
+          "column": 14,
+          "label": "13",
+          "category": "STD"
+        },
+        {
+          "column": 15,
+          "label": "14",
+          "category": "STD"
+        },
+        {
+          "column": 16,
+          "label": "15",
+          "category": "STD"
+        },
+        {
+          "column": 17,
+          "label": "16",
+          "category": "STD"
+        }
+      ]
+    },
+    {
+      "label": "I",
+      "seats": [
+        {
+          "column": 0,
+          "label": "1",
+          "category": "PRM"
+        },
+        {
+          "column": 1,
+          "label": "2",
+          "category": "PRM"
+        },
+        {
+          "column": 2,
+          "label": "3",
+          "category": "PRM"
+        },
+        {
+          "column": 3,
+          "label": "4",
+          "category": "PRM"
+        },
+        {
+          "column": 4,
+          "label": "5",
+          "category": "PRM"
+        },
+        {
+          "column": 5,
+          "label": "6",
+          "category": "PRM"
+        },
+        {
+          "column": 6,
+          "label": "7",
+          "category": "PRM"
+        },
+        {
+          "column": 7,
+          "label": "8",
+          "category": "PRM"
+        },
+        {
+          "column": 10,
+          "label": "9",
+          "category": "PRM"
+        },
+        {
+          "column": 11,
+          "label": "10",
+          "category": "PRM"
+        },
+        {
+          "column": 12,
+          "label": "11",
+          "category": "PRM"
+        },
+        {
+          "column": 13,
+          "label": "12",
+          "category": "PRM"
+        },
+        {
+          "column": 14,
+          "label": "13",
+          "category": "PRM"
+        },
+        {
+          "column": 15,
+          "label": "14",
+          "category": "PRM"
+        },
+        {
+          "column": 16,
+          "label": "15",
+          "category": "PRM"
+        },
+        {
+          "column": 17,
+          "label": "16",
+          "category": "PRM"
+        }
+      ]
+    }
+  ],
+  "dimensions": {
+    "seatPitch": 0.58,
+    "rowPitch": 1.1,
+    "rowRise": 0.32,
+    "frontRowDistance": 6.2,
+    "screenWidth": 9.8,
+    "screenHeight": 4.1,
+    "screenBottomHeight": 0.95
+  }
+}

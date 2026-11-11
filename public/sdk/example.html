@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex" />
+    <title>SeatView 3D web component example</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <style>
+      /* This page stands in for any operator's booking site: plain HTML, no framework. */
+      :root {
+        --bg: #0e0f13;
+        --panel: #171920;
+        --line: rgba(255, 255, 255, 0.09);
+        --text: #f1f2f4;
+        --muted: #9a9ea8;
+        --accent: #e50914;
+        /* Theme the component from the host page: */
+        --seatview-accent: #e50914;
+        --seatview-brand-color: #ffffff;
+        --seatview-font: system-ui, -apple-system, 'Segoe UI', sans-serif;
+        --seatview-radius: 12px;
+      }
+      * { box-sizing: border-box; }
+      body { margin: 0; background: var(--bg); color: var(--text); font: 15px/1.55 system-ui, -apple-system, 'Segoe UI', sans-serif; }
+      main { width: min(1180px, 100% - 32px); margin: 0 auto; padding: 32px 0 64px; }
+      h1 { font-size: 26px; margin: 0 0 6px; letter-spacing: -0.01em; }
+      h2 { font-size: 15px; margin: 0 0 12px; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; }
+      p.lead { margin: 0 0 28px; color: var(--muted); max-width: 760px; }
+      code { font: 13px ui-monospace, SFMono-Regular, Menlo, monospace; background: rgba(255, 255, 255, 0.07); padding: 1px 6px; border-radius: 4px; }
+      .grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 20px; }
+      .card { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 18px; min-width: 0; }
+      .screen { height: 8px; margin: 4px 12% 22px; border-radius: 0 0 50% 50% / 0 0 100% 100%; background: linear-gradient(#f3d9a8, #b98a3d); box-shadow: 0 6px 30px rgba(255, 200, 120, 0.35); }
+      .seats { display: grid; gap: 5px; justify-content: center; overflow-x: auto; padding-bottom: 4px; }
+      .row { display: flex; gap: 4px; align-items: center; }
+      .row b { width: 18px; color: var(--muted); font-size: 11px; text-align: center; }
+      .seat, .gap { width: 22px; height: 20px; flex: none; }
+      .seat { border: 0; border-radius: 5px 5px 2px 2px; background: #3a3d47; color: #c7cad1; font-size: 9px; font-weight: 700; cursor: pointer; padding: 0; }
+      .seat:hover { background: #575b68; }
+      .seat[data-cat='PRM'] { background: #6b5a2c; }
+      .seat[data-cat='DIS'] { background: #2f5fd0; color: #fff; }
+      .seat[aria-pressed='true'] { background: var(--accent); color: #fff; }
+      .bar { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 16px; flex-wrap: wrap; }
+      .bar strong { font-size: 18px; }
+      button.primary { font: inherit; font-weight: 700; border: 0; border-radius: 999px; padding: 10px 18px; background: var(--accent); color: #fff; cursor: pointer; }
+      button.primary:disabled { opacity: 0.4; cursor: not-allowed; }
+      seatview-preview[mode='inline'] { margin-top: 2px; }
+      #log { margin: 0; height: 220px; overflow: auto; font: 12px/1.6 ui-monospace, SFMono-Regular, Menlo, monospace; color: #c9ccd3; white-space: pre-wrap; }
+      #log .t { color: #ff7a82; }
+      pre.snippet { margin: 0; padding: 14px; border-radius: 10px; background: #0a0b0e; border: 1px solid var(--line); overflow: auto; font: 12.5px/1.6 ui-monospace, SFMono-Regular, Menlo, monospace; color: #d4d6dc; }
+      @media (max-width: 860px) { .grid { grid-template-columns: 1fr; } }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>&lt;seatview-preview&gt; integration example</h1>
+      <p class="lead">
+        A plain HTML page standing in for an operator's booking site. The seat map on the left is the host's own markup.
+        The component only receives the selected seat and an auditorium configuration, and reports back through DOM events.
+      </p>
+
+      <div class="grid">
+        <section class="card" aria-labelledby="host-map">
+          <h2 id="host-map">Host seat map</h2>
+          <div class="screen" aria-hidden="true"></div>
+          <div class="seats" id="seats"></div>
+          <div class="bar">
+            <span>Selected: <strong id="selected">none</strong></span>
+            <button class="primary" id="view" disabled>View from this seat</button>
+          </div>
+        </section>
+
+        <section class="card" aria-labelledby="inline-title">
+          <h2 id="inline-title">Inline mode</h2>
+          <seatview-preview id="inline" mode="inline" config-url="./demo-auditorium.json" seat="E8" brand="SeatView 3D"></seatview-preview>
+        </section>
+
+        <section class="card" aria-labelledby="events-title">
+          <h2 id="events-title">Events</h2>
+          <pre id="log" aria-live="polite"></pre>
+        </section>
+
+        <section class="card" aria-labelledby="code-title">
+          <h2 id="code-title">Integration code</h2>
+          <pre class="snippet">&lt;script type="module" src="https://seatview-3d.vercel.app/sdk/seatview.js"&gt;&lt;/script&gt;
+
+&lt;seatview-preview id="preview"
+  config-url="/auditoriums/room-3.json"
+  brand="Your Cinema"&gt;&lt;/seatview-preview&gt;
+
+&lt;script&gt;
+  const preview = document.getElementById('preview');
+  viewButton.onclick = () =&gt; preview.open(selectedSeatId);
+  preview.addEventListener('seatview-viewpoint', (e) =&gt;
+    analytics.track('seat_preview', e.detail));
+&lt;/script&gt;</pre>
+        </section>
+      </div>
+
+      <!-- Modal mode: opened from the host's own "View from this seat" button. -->
+      <seatview-preview id="modal" config-url="./demo-auditorium.json" brand="SeatView 3D"></seatview-preview>
+    </main>
+
+    <script type="module" src="./seatview.js"></script>
+    <script type="module">
+      const log = document.getElementById('log');
+      const write = (type, detail) => {
+        const line = document.createElement('div');
+        line.innerHTML = `<span class="t">${type}</span> ${JSON.stringify(detail)}`;
+        log.prepend(line);
+      };
+      const events = ['seatview-load', 'seatview-viewpoint', 'seatview-open', 'seatview-close', 'seatview-seat-change', 'seatview-error'];
+      for (const type of events) document.addEventListener(type, (e) => write(`${e.target.id}:${type}`, e.detail));
+
+      // Build the host's own seat map from the same configuration file.
+      const config = await (await fetch('./demo-auditorium.json')).json();
+      const seatsEl = document.getElementById('seats');
+      const selected = [];
+      const inline = document.getElementById('inline');
+      const modal = document.getElementById('modal');
+      const view = document.getElementById('view');
+      const label = document.getElementById('selected');
+
+      for (const row of config.rows) {
+        const rowEl = document.createElement('div');
+        rowEl.className = 'row';
+        rowEl.innerHTML = `<b>${row.label}</b>`;
+        const byColumn = new Map(row.seats.map((s) => [s.column, s]));
+        for (let c = 0; c < config.columns; c++) {
+          const s = byColumn.get(c);
+          if (!s) {
+            rowEl.append(Object.assign(document.createElement('span'), { className: 'gap' }));
+            continue;
+          }
+          const id = s.id ?? `${row.label}${s.label}`;
+          const b = document.createElement('button');
+          b.className = 'seat';
+          b.textContent = s.wheelchair ? '♿' : s.label;
+          b.dataset.cat = s.category ?? '';
+          b.setAttribute('aria-pressed', 'false');
+          b.setAttribute('aria-label', `Seat ${id}`);
+          b.addEventListener('click', () => {
+            const i = selected.indexOf(id);
+            if (i >= 0) selected.splice(i, 1);
+            else selected.push(id);
+            b.setAttribute('aria-pressed', String(i < 0));
+            const active = selected.at(-1) ?? null;
+            label.textContent = selected.length ? selected.join(', ') : 'none';
+            view.disabled = !active;
+            // Keep both components in sync with the host's selection.
+            inline.selectedSeats = selected;
+            modal.selectedSeats = selected;
+            if (active) inline.seat = active;
+          });
+          rowEl.append(b);
+        }
+        seatsEl.append(rowEl);
+      }
+
+      view.addEventListener('click', () => modal.open(selected.at(-1)));
+    </script>
+  </body>
+</html>

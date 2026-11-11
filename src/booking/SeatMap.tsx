@@ -58,8 +58,10 @@ export const SeatMap = memo(function SeatMap({
       className={`seatmap ${compact ? 'seatmap--compact' : ''} ${variant === 'dark' ? 'seatmap--dark' : ''} ${readOnly ? 'seatmap--readonly' : ''}`}
       role="group"
       aria-label={map.roomName}
+      // Grid size, so hosts can derive a fluid --cell from their container (see seatmap.css).
+      style={{ ['--cols' as string]: columns, ['--rows' as string]: map.seats.filter((r) => r.length > 0).length }}
     >
-      <table className="seatmap__table" style={{ ['--cols' as string]: columns }}>
+      <table className="seatmap__table">
         <tbody>
           {map.seats.map((row, ri) => {
             if (row.length === 0) return null;

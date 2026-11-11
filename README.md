@@ -11,10 +11,14 @@ Two things live in this repository:
    - `/pathe-demo` — a replica of the Pathé booking page built on the real Salle 3 seat map captured from
      `s.pathe.tn`, used as the integration prototype.
 
+3. **The `<seatview-preview>` web component** (`src/web-component`): the engine packaged as a custom element
+   for any booking site, built to `dist/sdk/` and served at `/sdk/seatview.js`. See
+   [docs/web-component.md](docs/web-component.md) and the live example at `/sdk/example.html`.
+
 ```bash
 npm install
 npm run dev        # http://localhost:5173  (landing)  ·  /pathe-demo (booking prototype)
-npm run build      # type check + production build into dist/
+npm run build      # type check + site build into dist/ + web component into dist/sdk/
 ```
 
 Stack: Vite 6, React 19, TypeScript, Three.js 0.176, @react-three/fiber 9, @react-three/drei 10, plain CSS with

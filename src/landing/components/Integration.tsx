@@ -64,11 +64,12 @@ export function Integration() {
   );
 }
 
-/** Simple, responsive architecture diagram (inline SVG so it inherits the theme). */
+/** Architecture diagram: a wide layout, and a stacked one for narrow screens (inline SVG, themed by CSS). */
 function ArchitectureDiagram() {
   return (
     <figure className="diagram">
-      <svg viewBox="0 0 960 300" role="img" aria-labelledby="diagram-title diagram-desc">
+      <TallDiagram />
+      <svg className="diagram__wide" viewBox="0 0 960 300" role="img" aria-labelledby="diagram-title diagram-desc">
         <title id="diagram-title">SeatView 3D architecture</title>
         <desc id="diagram-desc">
           Your booking website and ticketing system send the selected seat to the SeatView 3D module; auditorium
@@ -128,5 +129,66 @@ function ArchitectureDiagram() {
         <text x="645" y="202" className="dg-label">config</text>
       </svg>
     </figure>
+  );
+}
+
+function TallDiagram() {
+  return (
+    <svg className="diagram__tall" viewBox="0 0 360 470" role="img" aria-labelledby="diagram-title-tall diagram-desc-tall">
+      <title id="diagram-title-tall">SeatView 3D architecture</title>
+      <desc id="diagram-desc-tall">
+        Your booking website and ticketing system send the selected seat and layouts to SeatView 3D; auditorium
+        configuration feeds it; it renders the 3D preview inside your booking page.
+      </desc>
+      <defs>
+        <marker id="arrow-t" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+          <path d="M0 0L10 5 0 10z" fill="#A1A1AA" />
+        </marker>
+        <linearGradient id="core-t" x1="0" x2="1">
+          <stop offset="0" stopColor="#E50914" />
+          <stop offset="1" stopColor="#8a0510" />
+        </linearGradient>
+      </defs>
+
+      <g className="dg-box">
+        <rect x="6" y="6" width="168" height="88" rx="14" />
+        <text x="90" y="44" className="dg-title dg-title--sm">Booking website</text>
+        <text x="90" y="68" className="dg-sub dg-sub--sm">seat selection</text>
+      </g>
+      <g className="dg-box">
+        <rect x="186" y="6" width="168" height="88" rx="14" />
+        <text x="270" y="44" className="dg-title dg-title--sm">Ticketing</text>
+        <text x="270" y="68" className="dg-sub dg-sub--sm">layouts · availability</text>
+      </g>
+
+      <path d="M90 94 V164" className="dg-arrow" markerEnd="url(#arrow-t)" />
+      <path d="M270 94 V164" className="dg-arrow" markerEnd="url(#arrow-t)" />
+      <text x="100" y="134" className="dg-label dg-label--start">selected seat</text>
+      <text x="280" y="134" className="dg-label dg-label--start">layouts</text>
+
+      <g className="dg-core">
+        <rect x="30" y="166" width="300" height="132" rx="18" fill="url(#core-t)" />
+        <text x="180" y="212" className="dg-core-title">SeatView 3D</text>
+        <text x="180" y="240" className="dg-core-sub">camera model · 3D engine</text>
+        <text x="180" y="262" className="dg-core-sub">SDK · web component · API</text>
+        <text x="180" y="284" className="dg-core-sub dg-core-sub--muted">loads on demand</text>
+      </g>
+
+      <path d="M90 374 V300" className="dg-arrow" markerEnd="url(#arrow-t)" />
+      <path d="M270 298 V372" className="dg-arrow" markerEnd="url(#arrow-t)" />
+      <text x="100" y="340" className="dg-label dg-label--start">config</text>
+      <text x="280" y="340" className="dg-label dg-label--start">render</text>
+
+      <g className="dg-box dg-box--dashed">
+        <rect x="6" y="376" width="168" height="88" rx="14" />
+        <text x="90" y="414" className="dg-title dg-title--sm">Room config</text>
+        <text x="90" y="438" className="dg-sub dg-sub--sm">rows · screen size</text>
+      </g>
+      <g className="dg-box">
+        <rect x="186" y="376" width="168" height="88" rx="14" />
+        <text x="270" y="414" className="dg-title dg-title--sm">3D preview</text>
+        <text x="270" y="438" className="dg-sub dg-sub--sm">in your booking page</text>
+      </g>
+    </svg>
   );
 }

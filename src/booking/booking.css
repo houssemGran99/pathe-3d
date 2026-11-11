@@ -165,12 +165,6 @@
   .booking__actions .btn { flex: 1; justify-content: center; }
 }
 @media (max-width: 600px) {
-  .seatmap__cell { width: 26px; height: 26px; }
-  .seat { width: 26px; height: 26px; }
-  .seat__glyph { width: 22px; height: 20px; border-radius: 5px 5px 3px 3px; }
-  .seat__glyph::before, .seat__glyph::after { width: 3px; height: 10px; }
-  .seat__num { font-size: 8px; }
-  .seat--duo .seat__glyph { width: 24px; }
-  .seatmap__table { border-spacing: 3px; }
+  .booking__main .seatmap { --cell: 26px; --gap: 3px; }
   .booking__legend { gap: 10px; font-size: 12px; }
 }

@@ -33,6 +33,8 @@ export interface SeatPreviewOverlayProps {
   brand?: string;
   /** Extra class on the overlay root, for host-specific theming of the CSS variables. */
   className?: string;
+  /** Where the overlay is mounted. Defaults to document.body; a Shadow DOM host passes its own node. */
+  portalContainer?: Element | DocumentFragment;
 }
 
 type Phase = 'loading' | 'ready' | 'error';
@@ -51,6 +53,7 @@ export function SeatPreviewOverlay({
   forceFallback = false,
   brand,
   className,
+  portalContainer,
 }: SeatPreviewOverlayProps) {
   const t = getStrings(locale);
   const [phase, setPhase] = useState<Phase>('loading');
@@ -289,7 +292,7 @@ export function SeatPreviewOverlay({
     </div>
   );
 
-  return createPortal(content, document.body);
+  return createPortal(content, portalContainer ?? document.body);
 }
 
 /** Tiny top-down diagram: screen bar, seat dot and the gaze line toward the screen centre. */

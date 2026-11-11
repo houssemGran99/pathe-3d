@@ -5,9 +5,11 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "build": "tsc -b && vite build && vite build -c vite.wc.config.ts",
     "preview": "vite preview",
-    "typecheck": "tsc -b"
+    "typecheck": "tsc -b",
+    "build:wc": "vite build -c vite.wc.config.ts",
+    "export:demo-config": "node scripts/export-demo-config.mts"
   },
   "dependencies": {
     "@react-three/drei": "^10.0.0",
