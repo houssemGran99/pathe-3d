@@ -1,6 +1,6 @@
 import { Canvas, useThree } from '@react-three/fiber';
 import { PerformanceMonitor } from '@react-three/drei';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { ACESFilmicToneMapping, SRGBColorSpace } from 'three';
 import { LOOK_LIMITS } from '../camera/seatCamera';
 import type { Auditorium, SeatViewpoint } from '../types';
@@ -42,6 +42,17 @@ export function CinemaScene({
 }: CinemaSceneProps) {
   // Device pixel ratio adapts to the measured frame rate so low-end phones stay smooth.
   const [dpr, setDpr] = useState<number>(() => Math.min(window.devicePixelRatio || 1, 1.75));
+  // Unmounting disposes the renderer, which deliberately loses the WebGL context. That is not an error,
+  // so context-loss reports are ignored once the scene is going away.
+  const unmounted = useRef(false);
+  const onErrorRef = useRef(onError);
+  onErrorRef.current = onError;
+  useEffect(() => {
+    unmounted.current = false;
+    return () => {
+      unmounted.current = true;
+    };
+  }, []);
 
   return (
     <Canvas
@@ -60,10 +71,12 @@ export function CinemaScene({
       onCreated={({ gl }) => {
         gl.domElement.addEventListener('webglcontextlost', (e) => {
           e.preventDefault();
-          onError?.(new Error('webgl-context-lost'));
+          if (!unmounted.current) onErrorRef.current?.(new Error('webgl-context-lost'));
         });
         // First frame has been produced by the time the next animation frame fires.
-        requestAnimationFrame(() => onReady?.());
+        requestAnimationFrame(() => {
+          if (!unmounted.current) onReady?.();
+        });
       }}
     >
       <PerformanceMonitor

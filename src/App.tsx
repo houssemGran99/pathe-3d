@@ -10,8 +10,18 @@ const BookingPage = PATHE_DEMO_ENABLED
   ? lazy(() => import('./booking/BookingPage').then((m) => ({ default: m.BookingPage })))
   : null;
 
+// Room configurator for operators: its own chunk, never loaded by the marketing pages.
+const AdminApp = lazy(() => import('./admin/AdminApp').then((m) => ({ default: m.AdminApp })));
+
 export function App() {
   const path = typeof window !== 'undefined' ? window.location.pathname.replace(/\/+$/, '') : '';
+  if (path === '/admin') {
+    return (
+      <Suspense fallback={null}>
+        <AdminApp />
+      </Suspense>
+    );
+  }
   if (BookingPage && path === '/pathe-demo') {
     return (
       <Suspense fallback={null}>

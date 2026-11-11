@@ -59,9 +59,12 @@ export function FirstPersonRig({ viewpoint, controller, transitionDuration = 1.4
       yaw: viewpoint.yaw,
       pitch: viewpoint.pitch,
     };
-    // Same seat again (e.g. StrictMode re-running effects, or a parent re-render): nothing to glide to.
-    if (initialised.current && lastSeatId.current === viewpoint.seatId) return;
-    lastSeatId.current = viewpoint.seatId;
+    // Same pose again (StrictMode re-running effects, a parent re-render, or a rebuilt but identical
+    // auditorium): nothing to glide to. A changed geometry for the same seat still moves the camera.
+    const poseKey = [viewpoint.seatId, ...viewpoint.position, viewpoint.yaw, viewpoint.pitch].map((v) => (typeof v === 'number' ? v.toFixed(4) : v)).join('|');
+    if (initialised.current && lastSeatId.current === poseKey) return;
+    const seatChanged = !lastSeatId.current?.startsWith(`${viewpoint.seatId}|`);
+    lastSeatId.current = poseKey;
     if (!initialised.current) {
       base.current = to;
       initialised.current = true;
@@ -72,7 +75,8 @@ export function FirstPersonRig({ viewpoint, controller, transitionDuration = 1.4
       return;
     }
     tween.current = { from: { ...base.current }, to, start: performance.now() };
-    controller.reset();
+    // Keep the user's head position when only the room geometry changed (editing); reset it on a new seat.
+    if (seatChanged) controller.reset();
     controller._set({ transitioning: true });
     settledNotified.current = false;
   }, [viewpoint, camera, controller]);

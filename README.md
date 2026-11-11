@@ -14,6 +14,12 @@ Two things live in this repository:
 3. **The `<seatview-preview>` web component** (`src/web-component`): the engine packaged as a custom element
    for any booking site, built to `dist/sdk/` and served at `/sdk/seatview.js`. See
    [docs/web-component.md](docs/web-component.md) and the live example at `/sdk/example.html`.
+4. **The room configurator** (`src/admin`, at `/admin`): build each auditorium's configuration without
+   writing JSON. Generate a room from a grid or import a seat map, paint seats, premium rows, Duo pairs,
+   wheelchair spaces and aisles, number rows and seats, enter measurements, check the first-person view
+   live, then download the `seatview/auditorium@1` file for `config-url`. Rooms are drafts in the browser's
+   local storage (no server yet), so the exported file is the deliverable. Undo/redo with Ctrl+Z / Ctrl+Y,
+   tool keys V S P D W A.
 
 ```bash
 npm install
