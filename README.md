@@ -1,59 +1,77 @@
-# Pathé — Interactive 3D first-person seat view
+# SeatView 3D — first-person cinema seat preview
 
-Prototype of the "View from this seat" feature for the Pathé booking flow (`s.pathe.tn`).
-When a customer selects a seat, a new action opens a first-person 3D preview of the auditorium rendered
-from that exact chair, with constrained look-around, zoom, a viewing-quality panel, and an in-preview seat
-map to compare seats without losing the booking selection.
+Two things live in this repository:
+
+1. **The 3D seat-preview engine** (`src/seat-preview`): a reusable React Three Fiber module that renders a
+   cinema auditorium from the exact position of a selected seat, with constrained look-around, zoom and
+   per-seat viewing metrics.
+2. **Two front ends that use it**:
+   - `/` — the **SeatView 3D** B2B marketing site (hero with the live engine, before/after comparison, live
+     demo, features, integration, benefits, segments, demo-request form).
+   - `/pathe-demo` — a replica of the Pathé booking page built on the real Salle 3 seat map captured from
+     `s.pathe.tn`, used as the integration prototype.
 
 ```bash
 npm install
-npm run dev        # http://localhost:5173
-npm run build      # type check + production build
+npm run dev        # http://localhost:5173  (landing)  ·  /pathe-demo (booking prototype)
+npm run build      # type check + production build into dist/
 ```
 
-QA switch: open `http://localhost:5173/?no3d` to force the non-WebGL fallback.
+Stack: Vite 6, React 19, TypeScript, Three.js 0.176, @react-three/fiber 9, @react-three/drei 10, plain CSS with
+design tokens. No UI framework, no animation library: scroll reveals use IntersectionObserver + CSS.
 
-## What was analysed on the live site
+## Configuration
 
-The production booking page (`/fr/V5202S46700/booking`) is an Angular app. Its seat map comes from
-`GET /api/seatmap/{locale}/{cinemaId}/{sessionId}/map`, which returns a grid, not metres:
+| Variable | Purpose |
+|---|---|
+| `VITE_DEMO_ENDPOINT` | HTTPS URL that receives the demo-request form as a JSON `POST`. Unset: the form validates but tells the visitor nothing was sent. |
+| `VITE_LINKEDIN_URL` | Company LinkedIn page. Unset: the footer shows the label without a link. |
 
-- `maps[0].seats` is an array of rows ordered **from the back of the room (rowIndex 0) to the front**, the
-  screen being drawn under the last row;
-- each seat carries `rowName`, `seatName`, `seatIndex` (column), `seatType` (`STD`, `DUO`, `DIS`, ...),
-  `status` (`0` available, `5` taken) and `seatSide` (`L`/`R`) for the two halves of a Duo seat;
-- the rendered table uses `data-number`, `data-type`, `data-seattypecode` and `data-status` on each seat.
+Query switches (development only unless noted):
 
-The Salle 3 map captured on 11 Nov 2026 (126 seats, 8 rows C to J, 16 columns, a wheelchair space and
-Duo pairs) is checked in as `src/booking/data/salle3.json` in the API's exact shape, so the fixture can be
-swapped for the real fetch without touching the 3D module.
+- `?no3d` — force the non-WebGL fallback (works in production too, for QA).
+- `?capture=E8` — opens the preview on that seat with the UI hidden, for screenshots. Used to produce
+  `public/seatview-preview.jpg` and `public/og-seatview.jpg` with headless Chrome:
+
+```bash
+chrome --headless=new --use-angle=swiftshader --enable-unsafe-swiftshader --window-size=1200,750 --virtual-time-budget=20000 --screenshot=capture.png "http://localhost:5173/?capture=E8"
+```
+
+Set the `og:image` URL in `index.html` to an absolute URL once the site has a domain. The SPA needs a
+history fallback on the host (serve `index.html` for `/pathe-demo`).
 
 ## Architecture
 
 ```
 src/
-  booking/                  Minimal replica of the Pathé seat-selection page (host application)
-    types.ts                Types of the Pathé seat-map API
-    data/salle3.json        Real seat map captured from s.pathe.tn
-    SeatMap.tsx             Seat grid (same data attributes as production), screen drawn underneath
-    useBookingState.ts      Selection state: selected seats, active seat, preview open/closed
-    BookingPage.tsx         Sidebar + seat map + bottom bar with the "Voir depuis ce siège" action
-  seat-preview/             Independent, reusable 3D module (public API in index.ts)
-    types.ts                Seat / Auditorium / SeatViewpoint data model (metres, Y up)
-    geometry/auditorium.ts  Grid -> metric auditorium (row pitch, stadium rise, screen size, room)
-    adapters/pathe.ts       Pathé seat map -> Auditorium
-    camera/seatCamera.ts    Eye position + natural gaze per seat, viewing-angle metrics and rating
-    scene/CinemaScene.tsx   React Three Fiber canvas (tone mapping, adaptive DPR, fog, lights)
-    scene/Screen.tsx        Emissive screen running a procedural "film" shader + RectAreaLight
-    scene/Seats.tsx         Instanced red seats (cushion, backrest, armrests, base), Duo and PMR handling
-    scene/Room.tsx          Stepped floor, ribbed walls, ceiling, aisle step lights, sconces
-    scene/FirstPersonRig.tsx Camera controller: seat glide, damped look-around, zoom, input
-    scene/rigController.ts  Tiny store shared by the UI buttons and the rig
-    ui/SeatPreviewOverlay.tsx Modal UI: viewport, info panel, controls, drawer, loading/error/fallback
-    ui/seat-preview.css, ui/i18n.ts (fr/en), ui/webgl.ts (capability check)
+  landing/                   SeatView 3D marketing site
+    LandingPage.tsx          Composition, shared demo booking state, full-screen preview, capture mode
+    landing.css              Design tokens (#080808 / #111 / #171717 / #E50914) and all section styles
+    data/demoAuditorium.ts   Neutral 9-row demo room (no operator branding) + hero quick-pick seats
+    components/              Nav, Hero + HeroScene (inline engine), Problem (before/after), Experience
+                             (live demo), Features, Integration (+ SVG diagram), Benefits, Segments,
+                             FinalCta, DemoForm, Footer, Logo, Reveal
+    hooks/useReveal.ts       IntersectionObserver reveal + in-view flag
+  booking/                   Booking-page replica (host application for the prototype)
+    types.ts                 Types of the Pathé seat-map API (also the shape the demo room uses)
+    data/salle3.json         Real seat map captured from s.pathe.tn (Salle 3, 126 seats)
+    SeatMap.tsx + seatmap.css Seat grid, light/dark variants, compact and read-only modes
+    useBookingState.ts       Selection state: selected seats, active seat, preview open/closed
+    BookingPage.tsx          Pathé-styled page at /pathe-demo
+  seat-preview/              Reusable 3D module (public API in index.ts)
+    types.ts                 Seat / Auditorium / SeatViewpoint (metres, Y up)
+    geometry/auditorium.ts   Grid -> metric auditorium (row pitch, stadium rise, screen, room)
+    adapters/pathe.ts        Seat-map grid -> Auditorium
+    camera/seatCamera.ts     Eye position + natural gaze per seat, viewing metrics and rating
+    scene/CinemaScene.tsx    Canvas: tone mapping, adaptive DPR, fog, lights, `active` and `wheelZoom`
+    scene/Screen.tsx         Emissive screen with a procedural film shader + RectAreaLight
+    scene/Seats.tsx          Instanced red seats (cushion, back, armrests, base); Duo and wheelchair spaces
+    scene/Room.tsx           Stepped floor, ribbed walls, ceiling, aisle lights, sconces
+    scene/FirstPersonRig.tsx Camera controller: wall-clock seat glide, damped look, zoom, input
+    ui/SeatPreviewOverlay.tsx Modal UI: viewport, panel, controls, drawer, loading/error/fallback, `brand`
 ```
 
-### Integration contract
+### Using the engine in a host page
 
 ```tsx
 import { SeatPreviewOverlay, patheSeatMapToAuditorium } from './seat-preview';
@@ -63,61 +81,56 @@ const auditorium = useMemo(() => patheSeatMapToAuditorium(map, { selectedSeatIds
 <SeatPreviewOverlay
   open={previewOpen}
   auditorium={auditorium}
-  seatId={activeSeatId}              // changing it glides the camera to the new seat
-  selectedSeatIds={selectedIds}      // shown as "Mes places" chips
-  onClose={closePreview}             // booking state is untouched
+  seatId={activeSeatId}                  // changing it glides the camera to the new seat
+  selectedSeatIds={selectedIds}
+  onClose={closePreview}                 // booking state is untouched
   onSeatChange={setActiveSeatId}
-  renderSeatMap={() => <SeatMap ... />} // the host's own seat map, reused in the drawer
+  renderSeatMap={() => <SeatMap ... />}  // the host's own seat map, reused in the drawer
+  brand="Your cinema"
+  locale="en"
 />
 ```
 
-The module never writes to seat availability. The only state it can change is which seat is being
-previewed, through the callbacks the host provides. Closing the overlay unmounts the canvas and frees the
-WebGL context, geometries and materials.
+For an inline embed (as in the landing hero) render `CinemaScene` directly with a `viewpoint` from
+`computeSeatViewpoint`, a `createRigController()` instance, `active` tied to visibility and `wheelZoom={false}`.
+The module never writes to seat availability; closing the overlay unmounts the canvas and frees GPU resources.
 
 ### First-person camera
 
-`computeSeatViewpoint(seat, auditorium)`:
+`computeSeatViewpoint(seat, auditorium)`: eyes at seat position + 1.16 m (1.25 m for a wheelchair space),
+14 cm in front of the backrest; natural gaze at the screen centre (`yaw = atan2(-dx, -dz)`,
+`pitch = atan2(dy, horizontal)`), plus distance, lateral and vertical angles, apparent screen width and an
+SMPTE/THX-based rating. The rig glides between seats over 1.4 s on wall-clock time and clamps head movement to
+±35° yaw, ±22° pitch and a 34° to 78° field of view.
 
-- eyes at `seat.position + (0, 1.16 m, -0.14 m)` (seated eye height; 1.25 m for a wheelchair space);
-- natural gaze = screen centre, so `yaw = atan2(-dx, -dz)` and `pitch = atan2(dy, horizontalDistance)`;
-  left seats look right, right seats look left, the front row looks up, the back row sees a smaller screen;
-- metrics: distance to the screen centre, lateral angle off the screen axis, elevation, apparent screen
-  width (angle subtended by the screen) and a rating based on SMPTE/THX guidance (30°/36° minimum,
-  roughly 55° to 70° "immersive", more "very close").
+## Validation
 
-The rig tweens between seats over 1.4 s on wall-clock time (so it finishes even on throttled tabs), damps
-the user's head movement, and clamps it to ±35° yaw, ±22° pitch and a 34° to 78° field of view. The user
-can drag, scroll or pinch, use the arrow keys, `+`/`-`, `R`/`0` to reset, and `Esc` to close.
+Camera poses measured live for the Pathé Salle 3 map (eye position in metres; heading relative to the screen axis):
 
-### Default dimensions (used when the source has no metres)
+| Seat | Eye (x, y, z) | Heading | Elevation | Distance | Apparent width | Rating |
+|------|---------------|---------|-----------|----------|----------------|--------|
+| C9  (front, far left)  | -4.35, 1.16, 6.06  | 36° right | 14° up  | 7.7 m  | 67° | very close |
+| C16 (front, centre)    | -0.29, 1.16, 6.06  | 3° right  | 17° up  | 6.3 m  | 78° | very close |
+| F16 (middle, centre)   | -0.29, 2.12, 9.36  | 2° right  | 5° up   | 9.4 m  | 55° | immersive |
+| J9  (back, left)       | -4.35, 3.40, 13.76 | 18° right | 2° down | 14.4 m | 38° | optimal |
+| J24 (back, right)      |  4.35, 3.40, 13.76 | 18° left  | 2° down | 14.4 m | 38° | optimal |
 
-Seat pitch 0.58 m, row pitch 1.10 m, stadium rise 0.32 m, front row 6.2 m from a 9.8 m x 4.1 m screen whose
-bottom edge is 0.95 m above the front floor. All of it is overridable per auditorium through
-`patheSeatMapToAuditorium(map, { dimensions })`.
+Landing-page checks (browser automation): mobile menu open/close, form validation (6 required fields,
+business-email rule, unconfigured-endpoint notice), anchor targets, live demo opens the overlay with the
+SeatView brand and keeps the selection after closing, no horizontal overflow at 375 px.
 
-## Validation (Salle 3, measured live from the camera)
+## Performance
 
-| Seat | Position in room | Eye (x, y, z) m | Heading | Elevation | Distance | Apparent width | Rating |
-|------|------------------|-----------------|---------|-----------|----------|----------------|--------|
-| C9   | front row, far left  | -4.35, 1.16, 6.06  | 36° right | 14° up  | 7.7 m  | 67° | very close |
-| C16  | front row, centre    | -0.29, 1.16, 6.06  | 3° right  | 17° up  | 6.3 m  | 78° | very close |
-| C24  | front row, far right |  4.35, 1.16, 6.06  | 36° left  | 14° up  | 7.7 m  | 67° | very close |
-| F9   | middle row, left     | -4.35, 2.12, 9.36  | 25° right | 5° up   | 10.4 m | 51° | optimal |
-| F16  | middle row, centre   | -0.29, 2.12, 9.36  | 2° right  | 5° up   | 9.4 m  | 55° | immersive |
-| J9   | back row, left       | -4.35, 3.40, 13.76 | 18° right | 2° down | 14.4 m | 38° | optimal |
-| J15  | back row, centre     | -0.87, 3.40, 13.76 | 4° right  | 2° down | 13.8 m | 39° | optimal |
-| J24  | back row, right      |  4.35, 3.40, 13.76 | 18° left  | 2° down | 14.4 m | 38° | optimal |
+- Three.js, React Three Fiber and Drei live in a lazy chunk; the landing's first bundle is about 57 kB
+  (18 kB gzip) and the booking page about 25 kB on top. The 3D chunk loads when the hero is idle-mounted
+  (desktop) or when a preview opens (mobile), never during the normal booking flow.
+- Inline scene pauses its render loop when scrolled out of view or when the full-screen preview is open.
+- Seats are four `InstancedMesh`es; the screen is one shader; the room is procedural. No external assets.
+- `PerformanceMonitor` lowers the pixel ratio (capped at 1.75) when the frame rate drops.
+- Touch devices get a poster in the hero and open the full-screen experience on tap, keeping the hero light.
 
-Also verified: closing the preview keeps the selection and active seat, the canvas is removed from the
-DOM on close, the `?no3d` fallback shows the same metrics without WebGL, and the production build keeps
-Three.js out of the booking bundle (`index` ≈ 44 kB, `three` chunk ≈ 1.1 MB loaded on demand).
+## Positioning notes
 
-## Performance notes
-
-- Three.js, React Three Fiber and Drei are in a lazy chunk (`React.lazy` + `manualChunks`); the booking
-  page never loads them until the preview opens.
-- All seats are drawn with four `InstancedMesh`es; the whole room is a few dozen draw calls, no shadows.
-- `PerformanceMonitor` lowers the device pixel ratio (capped at 1.75) when the frame rate drops.
-- The screen is one procedural shader (no textures); the room is procedural geometry (no asset download).
-- A WebGL capability check runs before the chunk loads; context loss shows an error state with retry.
+The site makes no claims of customers, partners, statistics or specific ticketing integrations. The Pathé
+page under `/pathe-demo` is an integration prototype built on public seat-map data and is excluded from
+indexing via `robots.txt`; it is not presented on the site as a customer.

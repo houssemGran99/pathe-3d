@@ -2,14 +2,19 @@ import { memo } from 'react';
 import type { PatheSeat, PatheSeatMap } from './types';
 import { SEAT_TYPE_LABELS, isSeatAvailable, seatId } from './types';
 import type { Locale } from '../seat-preview/ui/i18n';
+import './seatmap.css';
 
 interface Props {
   map: PatheSeatMap;
   selectedIds: readonly string[];
   activeSeatId?: string | null;
   onToggleSeat: (id: string) => void;
-  /** Compact variant for the preview drawer. */
+  /** Compact sizing for the preview drawer. */
   compact?: boolean;
+  /** Colour scheme; 'dark' suits the preview drawer and dark pages. */
+  variant?: 'light' | 'dark';
+  /** Disable interaction (illustrative use). */
+  readOnly?: boolean;
   locale?: Locale;
   /** When set, clicking an already-selected seat makes it active instead of deselecting it. */
   selectActiveOnly?: boolean;
@@ -29,6 +34,8 @@ export const SeatMap = memo(function SeatMap({
   activeSeatId,
   onToggleSeat,
   compact,
+  variant = 'light',
+  readOnly,
   locale = 'fr',
   selectActiveOnly,
   onActivateSeat,
@@ -47,7 +54,11 @@ export const SeatMap = memo(function SeatMap({
   };
 
   return (
-    <div className={`seatmap ${compact ? 'seatmap--compact' : ''}`} role="group" aria-label={map.roomName}>
+    <div
+      className={`seatmap ${compact ? 'seatmap--compact' : ''} ${variant === 'dark' ? 'seatmap--dark' : ''} ${readOnly ? 'seatmap--readonly' : ''}`}
+      role="group"
+      aria-label={map.roomName}
+    >
       <table className="seatmap__table" style={{ ['--cols' as string]: columns }}>
         <tbody>
           {map.seats.map((row, ri) => {
@@ -80,7 +91,8 @@ export const SeatMap = memo(function SeatMap({
                         data-type={typeLabel}
                         data-seattypecode={seat.seatType}
                         data-status={available ? 'available' : 'taken'}
-                        disabled={!available}
+                        disabled={!available || readOnly}
+                        tabIndex={readOnly ? -1 : undefined}
                         aria-pressed={isSelected}
                         aria-label={`${typeLabel} ${id}`}
                         title={`${id} · ${typeLabel}`}

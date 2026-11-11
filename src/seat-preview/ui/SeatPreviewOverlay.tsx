@@ -29,6 +29,10 @@ export interface SeatPreviewOverlayProps {
   renderSeatMap?: () => ReactNode;
   /** QA switch: show the non-WebGL fallback even on capable browsers. */
   forceFallback?: boolean;
+  /** Operator brand shown in the top bar (e.g. the cinema's name). Omitted when empty. */
+  brand?: string;
+  /** Extra class on the overlay root, for host-specific theming of the CSS variables. */
+  className?: string;
 }
 
 type Phase = 'loading' | 'ready' | 'error';
@@ -45,6 +49,8 @@ export function SeatPreviewOverlay({
   locale = 'fr',
   renderSeatMap,
   forceFallback = false,
+  brand,
+  className,
 }: SeatPreviewOverlayProps) {
   const t = getStrings(locale);
   const [phase, setPhase] = useState<Phase>('loading');
@@ -107,7 +113,7 @@ export function SeatPreviewOverlay({
   const mySeats = selectedSeatIds.map((id) => findSeat(auditorium, id)).filter((s): s is Seat => !!s);
 
   const content = (
-    <div ref={rootRef} className="sp-overlay" role="dialog" aria-modal="true" aria-label={t.title}>
+    <div ref={rootRef} className={`sp-overlay ${className ?? ''}`} role="dialog" aria-modal="true" aria-label={t.title}>
       <div className="sp-viewport">
         {webgl ? (
           <Suspense fallback={null}>
@@ -166,9 +172,11 @@ export function SeatPreviewOverlay({
 
       <header className="sp-topbar">
         <div className="sp-topbar__brand">
-          <span className="sp-logo" aria-hidden>
-            Pathé
-          </span>
+          {brand && (
+            <span className="sp-logo" aria-hidden>
+              {brand}
+            </span>
+          )}
           <div>
             <h2 className="sp-topbar__title">{t.title}</h2>
             <p className="sp-topbar__sub">

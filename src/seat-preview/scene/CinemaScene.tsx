@@ -1,6 +1,6 @@
-import { Canvas } from '@react-three/fiber';
+import { Canvas, useThree } from '@react-three/fiber';
 import { PerformanceMonitor } from '@react-three/drei';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ACESFilmicToneMapping, SRGBColorSpace } from 'three';
 import { LOOK_LIMITS } from '../camera/seatCamera';
 import type { Auditorium, SeatViewpoint } from '../types';
@@ -20,13 +20,26 @@ export interface CinemaSceneProps {
   onReady?: () => void;
   onError?: (error: unknown) => void;
   className?: string;
+  /** When false the render loop is paused (e.g. an inline embed scrolled out of view). */
+  active?: boolean;
+  /** Mouse-wheel zoom; disable for inline embeds so the page keeps scrolling. */
+  wheelZoom?: boolean;
 }
 
 /**
  * Self-contained React Three Fiber canvas rendering the auditorium from the selected seat.
  * The canvas only exists while the preview is open, so nothing renders during the normal booking flow.
  */
-export function CinemaScene({ auditorium, viewpoint, controller, onReady, onError, className }: CinemaSceneProps) {
+export function CinemaScene({
+  auditorium,
+  viewpoint,
+  controller,
+  onReady,
+  onError,
+  className,
+  active = true,
+  wheelZoom = true,
+}: CinemaSceneProps) {
   // Device pixel ratio adapts to the measured frame rate so low-end phones stay smooth.
   const [dpr, setDpr] = useState<number>(() => Math.min(window.devicePixelRatio || 1, 1.75));
 
@@ -34,6 +47,7 @@ export function CinemaScene({ auditorium, viewpoint, controller, onReady, onErro
     <Canvas
       className={className}
       dpr={dpr}
+      frameloop={active ? 'always' : 'never'}
       // Static config only: the rig owns position and orientation from the first frame.
       camera={CAMERA_CONFIG}
       gl={{
@@ -66,7 +80,21 @@ export function CinemaScene({ auditorium, viewpoint, controller, onReady, onErro
       <Screen auditorium={auditorium} />
       <Room auditorium={auditorium} />
       <Seats auditorium={auditorium} currentSeatId={viewpoint.seatId} />
-      <FirstPersonRig viewpoint={viewpoint} controller={controller} />
+      <FirstPersonRig viewpoint={viewpoint} controller={controller} wheelZoom={wheelZoom} />
+      {import.meta.env.DEV && <DevFrameDriver />}
     </Canvas>
   );
+}
+
+/** Dev-only: lets automated checks render frames on demand when the tab's animation frames are throttled. */
+function DevFrameDriver() {
+  const advance = useThree((s) => s.advance);
+  useEffect(() => {
+    const w = window as unknown as { __seatPreviewAdvance?: (t: number) => void };
+    w.__seatPreviewAdvance = (t) => advance(t, true);
+    return () => {
+      delete w.__seatPreviewAdvance;
+    };
+  }, [advance]);
+  return null;
 }

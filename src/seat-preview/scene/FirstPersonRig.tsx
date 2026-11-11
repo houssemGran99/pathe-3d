@@ -11,6 +11,7 @@ interface Props {
   /** Seconds for a seat-to-seat transition. */
   transitionDuration?: number;
   onSettled?: () => void;
+  wheelZoom?: boolean;
 }
 
 interface Pose {
@@ -32,7 +33,7 @@ const shortestAngle = (from: number, to: number) => from + Math.atan2(Math.sin(t
  * - Head movement and zoom are exponentially damped for a smooth, weighty feel.
  * - Pointer drag, wheel, pinch and arrow keys are handled on the canvas element.
  */
-export function FirstPersonRig({ viewpoint, controller, transitionDuration = 1.4, onSettled }: Props) {
+export function FirstPersonRig({ viewpoint, controller, transitionDuration = 1.4, onSettled, wheelZoom = true }: Props) {
   const camera = useThree((s) => s.camera) as PerspectiveCamera;
   const gl = useThree((s) => s.gl);
 
@@ -46,6 +47,7 @@ export function FirstPersonRig({ viewpoint, controller, transitionDuration = 1.4
   const tween = useRef<{ from: Pose; to: Pose; start: number } | null>(null);
   const smoothed = useRef({ yaw: 0, pitch: 0, fov: LOOK_LIMITS.fovDefault });
   const initialised = useRef(false);
+  const lastSeatId = useRef<string | null>(null);
   const settledNotified = useRef(false);
 
   // Seat change: start a glide from the current base pose to the new viewpoint.
@@ -57,6 +59,9 @@ export function FirstPersonRig({ viewpoint, controller, transitionDuration = 1.4
       yaw: viewpoint.yaw,
       pitch: viewpoint.pitch,
     };
+    // Same seat again (e.g. StrictMode re-running effects, or a parent re-render): nothing to glide to.
+    if (initialised.current && lastSeatId.current === viewpoint.seatId) return;
+    lastSeatId.current = viewpoint.seatId;
     if (!initialised.current) {
       base.current = to;
       initialised.current = true;
@@ -155,7 +160,7 @@ export function FirstPersonRig({ viewpoint, controller, transitionDuration = 1.4
     el.addEventListener('pointermove', onPointerMove);
     el.addEventListener('pointerup', onPointerUp);
     el.addEventListener('pointercancel', onPointerUp);
-    el.addEventListener('wheel', onWheel, { passive: false });
+    if (wheelZoom) el.addEventListener('wheel', onWheel, { passive: false });
     el.addEventListener('keydown', onKey);
     return () => {
       el.removeEventListener('pointerdown', onPointerDown);
@@ -165,7 +170,7 @@ export function FirstPersonRig({ viewpoint, controller, transitionDuration = 1.4
       el.removeEventListener('wheel', onWheel);
       el.removeEventListener('keydown', onKey);
     };
-  }, [gl, controller]);
+  }, [gl, controller, wheelZoom]);
 
   useFrame((_, delta) => {
     // Large deltas (background tab, hitch) only make the damping converge faster; never explode.

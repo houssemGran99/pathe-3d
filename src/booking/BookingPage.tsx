@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import salle3 from './data/salle3.json';
 import { SeatMap } from './SeatMap';
 import { useBookingState } from './useBookingState';
@@ -65,6 +65,10 @@ export function BookingPage() {
   const [locale, setLocale] = useState<Locale>('fr');
   const t = copy[locale];
   const booking = useBookingState(map);
+
+  useEffect(() => {
+    document.title = 'Réservation Cinémas Pathé — Sélectionnez vos places';
+  }, []);
   const { selectedIds, activeSeatId, previewOpen, toggleSeat, openPreview, closePreview, setActiveSeatId } = booking;
 
   // The metric auditorium model is derived from the booking's own seat map; it is cheap to rebuild
@@ -87,6 +91,7 @@ export function BookingPage() {
         onActivateSeat={setActiveSeatId}
         selectActiveOnly
         compact
+        variant="dark"
         locale={locale}
       />
     ),
@@ -204,6 +209,7 @@ export function BookingPage() {
         locale={locale}
         renderSeatMap={renderSeatMapInPreview}
         forceFallback={forceFallback}
+        brand="Pathé"
       />
     </div>
   );
